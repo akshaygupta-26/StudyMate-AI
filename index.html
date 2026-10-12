@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyMate AI | Next-Gen Intelligent Study Assistant</title>
+    <meta name="description"
+        content="Supercharge your learning with StudyMate AI: intelligent notes summarization, dynamic quizzes, spaced-repetition flashcards, pomodoro focus timer, and personalized study planner.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Canvas for celebration confetti -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- App Container -->
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="brand-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <path d="M12 6v6"></path>
+                            <path d="M9 9h6"></path>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <span>StudyMate</span>
+                        <span class="ai-badge">AI 2.0</span>
+                    </div>
+                </div>
+                <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close navigation menu">✕</button>
+            </div>
+
+            <div class="sidebar-user">
+                <div class="avatar-ring">
+                    <div class="avatar">⚡</div>
+                </div>
+                <div class="user-meta">
+                    <span class="user-name">Scholar Mode</span>
+                    <span class="user-status"><span class="status-dot"></span> Ready to Study</span>
+                </div>
+            </div>
+
+            <p class="nav-label">WORKSPACE</p>
+            <nav class="nav-menu">
+                <button class="nav-item active" data-target="dashboard" id="navDashboard">
+                    <span class="nav-icon">⌂</span>
+                    <span class="nav-title">Dashboard</span>
+                </button>
+                <button class="nav-item" data-target="summarizer" id="navSummarizer">
+                    <span class="nav-icon">▤</span>
+                    <span class="nav-title">Notes Summarizer</span>
+                    <span class="nav-pill">Smart</span>
+                </button>
+                <button class="nav-item" data-target="quiz" id="navQuiz">
+                    <span class="nav-icon">✎</span>
+                    <span class="nav-title">Quiz Generator</span>
+                </button>
+                <button class="nav-item" data-target="flashcards" id="navFlashcards">
+                    <span class="nav-icon">🗂</span>
+                    <span class="nav-title">Flashcards</span>
+                    <span class="nav-pill new-pill">New</span>
+                </button>
+                <button class="nav-item" data-target="pomodoro" id="navPomodoro">
+                    <span class="nav-icon">⏱</span>
+                    <span class="nav-title">Focus Pomodoro</span>
+                </button>
+                <button class="nav-item" data-target="planner" id="navPlanner">
+                    <span class="nav-icon">☑</span>
+                    <span class="nav-title">Study Planner</span>
+                    <span class="badge-count" id="pendingTasksBadge">0</span>
+                </button>
+                <button class="nav-item" data-target="chat" id="navChat">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-title">AI Study Buddy</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="streak-card">
+                    <div class="streak-header">
+                        <span class="streak-icon">🔥</span>
+                        <div>
+                            <div class="streak-label">DAILY STREAK</div>
+                            <div class="streak-days" id="streakDaysCount">5 Days Active</div>
+                        </div>
+                    </div>
+                    <div class="streak-bar-bg">
+                        <div class="streak-bar-fill" style="width: 72%;"></div>
+                    </div>
+                    <p class="streak-sub">Consistency beats intensity!</p>
+                </div>
+
+                <div class="sidebar-controls">
+                    <button class="icon-tool-btn" id="themeToggleBtn" title="Toggle Dark/Light Theme">
+                        <span id="themeIcon">☀️</span>
+                        <span class="btn-label" id="themeText">Light Mode</span>
+                    </button>
+                    <button class="icon-tool-btn" id="settingsBtn" title="Settings & AI Key">
+                        <span>⚙</span>
+                        <span class="btn-label">Settings</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main" id="mainContent">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Open sidebar menu">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="page-header-info">
+                        <span class="breadcrumbs" id="breadcrumbText">WORKSPACE / OVERVIEW</span>
+                        <h1 class="page-main-title" id="pageTitle">Dashboard</h1>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <button class="topbar-pill-btn" id="soundToggleBtn" title="Toggle Sound Effects">
+                        <span id="soundIcon">🔊</span>
+                        <span class="pill-text" id="soundText">Sound ON</span>
+                    </button>
+                    <button class="topbar-pill-btn primary-glow-btn" id="quickAskBtn" data-go="chat">
+                        <span>✦</span>
+                        <span>Ask AI</span>
+                    </button>
+                    <div class="level-badge" title="Scholar Level 4 (850 XP)">
+                        <span class="level-num">Lv. 4</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 1. DASHBOARD PAGE -->
+            <section id="dashboard" class="page active-page">
+                <!-- Hero Welcome Banner -->
+                <div class="welcome-banner">
+                    <div class="welcome-content">
+                        <div class="welcome-chip">
+                            <span class="pulse-sparkle">✦</span>
+                            <span id="welcomeGreeting">Welcome back, Scholar!</span>
+                        </div>
+                        <h2>Accelerate your learning with <span>personalized AI.</span></h2>
+                        <p class="welcome-desc">
+                            Transform dense textbooks into crisp notes, test your memory with instant quizzes, and stay locked in with focus timers.
+                        </p>
+                        <div class="welcome-actions">
+                            <button class="btn btn-primary" data-go="summarizer">
+                                <span>Summarize Notes</span>
+                                <span>→</span>
+                            </button>
+                            <button class="btn btn-secondary" data-go="pomodoro">
+                                <span>Start 25m Focus</span>
+                                <span>⏱</span>
+                            </button>
+                        </div>
+                        <div class="daily-quote-box">
+                            <span class="quote-mark">“</span>
+                            <span id="dailyQuote">Learning is the only thing the mind never exhausts, never fears, and never regrets.</span>
+                            <span class="quote-author" id="quoteAuthor">— Leonardo da Vinci</span>
+                            <button class="btn-icon-subtle" id="refreshQuoteBtn" title="New Quote">↻</button>
+                        </div>
+                    </div>
+                    <div class="welcome-visual">
+                        <div class="illustration-frame">
+                            <img src="hero_illustration.jpg" alt="StudyMate AI Knowledge Engine" class="hero-img">
+                            <div class="floating-badge badge-top">
+                                <span class="badge-icon">🧠</span>
+                                <span>Active Recall AI</span>
+                            </div>
+                            <div class="floating-badge badge-bottom">
+                                <span class="badge-icon">⚡</span>
+                                <span>Fast & Offline Ready</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Metrics Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon-wrapper fire-bg">
+                            <span>🔥</span>
+                        </div>
+                        <div class="stat-data">
+                            <span class="stat-num" id="statStreak">5</span>
+                            <span class="stat-name">Day Study Streak</span>
+                        </div>
+                        <span class="stat-tag positive">+1 today</span>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon-wrapper timer-bg">
+                            <span>⏱</span>
+                        </div>
+                        <div class="stat-data">
+                            <span class="stat-num" id="statFocusMinutes">50m</span>
+                            <span class="stat-name">Focus Time Today</span>
+                        </div>
+                        <span class="stat-tag">2 sessions</span>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon-wrapper task-bg">
+                            <span>☑</span>
+                        </div>
+                        <div class="stat-data">
+                            <span class="stat-num" id="statTasksProgress">0 / 0</span>
+                            <span class="stat-name">Tasks Completed</span>
+                        </div>
+                        <span class="stat-tag" id="statTasksPercent">0%</span>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon-wrapper quiz-bg">
+                            <span>🏆</span>
+                        </div>
+                        <div class="stat-data">
+                            <span class="stat-num" id="statQuizzesCompleted">3</span>
+                            <span class="stat-name">Quizzes Mastered</span>
+                        </div>
+                        <span class="stat-tag positive">Avg 92%</span>
+                    </div>
+                </div>
+
+                <!-- Study Toolkit Cards -->
+                <div class="section-title-bar">
+                    <div>
+                        <h3>AI Study Suite</h3>
+                        <p>Specialized tools engineered for deep comprehension and exam mastery.</p>
+                    </div>
+                </div>
+
+                <div class="toolkit-grid">
+                    <div class="toolkit-card purple-glow" data-go="summarizer">
+                        <div class="toolkit-badge">NLP Engine</div>
+                        <div class="toolkit-icon purple-gradient">▤</div>
+                        <h4>Smart Summarizer</h4>
+                        <p>Compress massive lecture notes and chapters into structured key points and Feynman breakdowns.</p>
+                        <div class="toolkit-action">
+                            <span>Open Summarizer</span>
+                            <span class="arrow-glyph">→</span>
+                        </div>
+                    </div>
+
+                    <div class="toolkit-card blue-glow" data-go="quiz">
+                        <div class="toolkit-badge">Interactive</div>
+                        <div class="toolkit-icon blue-gradient">✎</div>
+                        <h4>Quiz Generator</h4>
+                        <p>Generate practice questions with real-time feedback, detailed rationale, and score grading.</p>
+                        <div class="toolkit-action">
+                            <span>Generate Quiz</span>
+                            <span class="arrow-glyph">→</span>
+                        </div>
+                    </div>
+
+                    <div class="toolkit-card cyan-glow" data-go="flashcards">
+                        <div class="toolkit-badge">Spaced Repetition</div>
+                        <div class="toolkit-icon cyan-gradient">🗂</div>
+                        <h4>Flashcards Hub</h4>
+                        <p>Flip interactive 3D cards, track mastered terms, and generate custom decks from any text.</p>
+                        <div class="toolkit-action">
+                            <span>Study Decks</span>
+                            <span class="arrow-glyph">→</span>
+                        </div>
+                    </div>
+
+                    <div class="toolkit-card orange-glow" data-go="pomodoro">
+                        <div class="toolkit-badge">Deep Work</div>
+                        <div class="toolkit-icon orange-gradient">⏱</div>
+                        <h4>Focus Pomodoro</h4>
+                        <p>25-minute deep work intervals paired with soothing synthesized ambient soundscapes.</p>
+                        <div class="toolkit-action">
+                            <span>Start Timer</span>
+                            <span class="arrow-glyph">→</span>
+                        </div>
+                    </div>
+
+                    <div class="toolkit-card green-glow" data-go="planner">
+                        <div class="toolkit-badge">Habit Builder</div>
+                        <div class="toolkit-icon green-gradient">☑</div>
+                        <h4>Study Planner</h4>
+                        <p>Prioritize coursework, track assignments with due dates, and monitor daily completion rates.</p>
+                        <div class="toolkit-action">
+                            <span>Manage Tasks</span>
+                            <span class="arrow-glyph">→</span>
+                        </div>
+                    </div>
+
+                    <div class="toolkit-card pink-glow" data-go="chat">
+                        <div class="toolkit-badge">24/7 Tutor</div>
+                        <div class="toolkit-icon pink-gradient">💬</div>
+                        <h4>AI Study Buddy</h4>
+                        <p>Ask doubts, request real-world analogies, or break down complex mathematical concepts.</p>
+                        <div class="toolkit-action">
+                            <span>Ask Question</span>
+                            <span class="arrow-glyph">→</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Progress Card -->
+                <div class="dashboard-bottom-grid">
+                    <div class="progress-panel">
+                        <div class="panel-header-inline">
+                            <div>
+                                <h4>Today's Study Progress</h4>
+                                <p>Stay on track to keep your daily learning streak alive.</p>
+                            </div>
+                            <span class="percentage-pill" id="dashboardProgressPercent">0% Done</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" id="dashboardProgressBar" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-footer-stats">
+                            <div>
+                                <span class="label">Completed Tasks:</span>
+                                <strong id="dashboardProgressRatio">0 of 0</strong>
+                            </div>
+                            <div>
+                                <span class="label">Daily Target:</span>
+                                <strong>4 Tasks Goal</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tips-panel">
+                        <h4>✦ Study Tip of the Day</h4>
+                        <p id="dynamicTipText">
+                            <strong>The Feynman Technique:</strong> Explain what you just learned out loud in simple, jargon-free words as if teaching a beginner. If you get stuck, re-read that exact section.
+                        </p>
+                        <button class="btn-text-link" id="nextTipBtn">Next Tip →</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. NOTES SUMMARIZER PAGE -->
+            <section id="summarizer" class="page">
+                <div class="tool-banner">
+                    <div class="tool-banner-info">
+                        <div class="tool-num-badge">TOOL 01 • INTELLIGENCE</div>
+                        <h2>Smart Notes <span>Summarizer</span></h2>
+                        <p>Paste textbook chapters, lecture transcripts, or articles. Extract crystal-clear summaries, high-yield key concepts, and exam prep bullet points.</p>
+                    </div>
+                    <div class="tool-samples">
+                        <span class="sample-label">Try Sample Notes:</span>
+                        <div class="sample-chips">
+                            <button class="chip-btn" data-sample="biology">Biology (Photosynthesis)</button>
+                            <button class="chip-btn" data-sample="cs">Computer Science (Neural Nets)</button>
+                            <button class="chip-btn" data-sample="history">History (French Revolution)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="summarizer-grid">
+                    <!-- Input Section -->
+                    <div class="editor-card">
+                        <div class="editor-header">
+                            <label for="notesInput" class="editor-label">Paste Your Study Notes or Syllabus</label>
+                            <div class="editor-actions">
+                                <label class="file-upload-btn" title="Upload .txt or .md file">
+                                    <input type="file" id="noteFileUpload" accept=".txt,.md" style="display:none;">
+                                    <span>📂 Upload File</span>
+                                </label>
+                                <button class="btn-sm-ghost" id="clearNoteBtn">Clear</button>
+                            </div>
+                        </div>
+
+                        <textarea id="notesInput" rows="12" placeholder="Paste your study notes, textbook excerpt, or lecture material here...
+(Or click one of the sample buttons above to see an instant demonstration!)"></textarea>
+
+                        <div class="editor-meta-row">
+                            <div class="meta-counters">
+                                <span id="wordCount">0 words</span>
+                                <span class="dot-sep">•</span>
+                                <span id="charCount">0 characters</span>
+                                <span class="dot-sep">•</span>
+                                <span id="readTime">0 min read</span>
+                            </div>
+
+                            <div class="summary-options-wrap">
+                                <div class="option-group">
+                                    <label for="summaryModeSelect">Style:</label>
+                                    <select id="summaryModeSelect" class="styled-select">
+                                        <option value="keypoints">Key Takeaways (High-Yield)</option>
+                                        <option value="executive">Executive Summary (TL;DR)</option>
+                                        <option value="feynman">Feynman (Explain Simply)</option>
+                                        <option value="glossary">Concepts & Definitions</option>
+                                        <option value="exam">Exam Cram Sheet</option>
+                                    </select>
+                                </div>
+
+                                <div class="option-group">
+                                    <label for="summaryLengthSelect">Length:</label>
+                                    <select id="summaryLengthSelect" class="styled-select">
+                                        <option value="brief">Brief (Quick Review)</option>
+                                        <option value="medium" selected>Balanced</option>
+                                        <option value="detailed">Comprehensive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="editor-submit-row">
+                            <div class="engine-indicator">
+                                <span class="ai-spark-icon">✨</span>
+                                <span id="activeEngineText">Intelligent NLP Engine (Offline Active)</span>
+                            </div>
+                            <button class="btn btn-primary btn-glow" id="summarizeBtn">
+                                <span>Generate Summary</span>
+                                <span class="btn-spinner hidden" id="summarizeSpinner"></span>
+                                <span>✦</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Output Section -->
+                    <div class="result-card" id="summaryOutputCard">
+                        <div class="result-header">
+                            <div class="result-title-group">
+                                <h3>Generated Synthesis</h3>
+                                <span class="result-mode-tag" id="resultModeTag">Key Takeaways</span>
+                            </div>
+                            <div class="result-actions" id="resultActions" style="display: none;">
+                                <button class="btn-sm-ghost" id="copySummaryBtn" title="Copy to clipboard">📋 Copy</button>
+                                <button class="btn-sm-ghost" id="exportSummaryBtn" title="Export as text file">💾 Export</button>
+                            </div>
+                        </div>
+
+                        <!-- Placeholder before generation -->
+                        <div class="result-empty-placeholder" id="summaryPlaceholder">
+                            <div class="empty-icon">📝</div>
+                            <h4>Your Summary Will Appear Here</h4>
+                            <p>Paste notes on the left and click "Generate Summary". You can also create quizzes or flashcards directly from your summarized points!</p>
+                        </div>
+
+                        <!-- Rendered Summary Content -->
+                        <div class="result-content hidden" id="summaryResultContent" aria-live="polite">
+                            <!-- Injected by script.js -->
+                        </div>
+
+                        <!-- Post summary bridges -->
+                        <div class="summary-bridges-row hidden" id="summaryBridges">
+                            <div class="bridge-card">
+                                <span>Turn this summary into a quiz:</span>
+                                <button class="btn btn-sm-primary" id="bridgeToQuizBtn">Create Quiz Now →</button>
+                            </div>
+                            <div class="bridge-card">
+                                <span>Generate flashcards from key terms:</span>
+                                <button class="btn btn-sm-secondary" id="bridgeToCardsBtn">Generate Cards →</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. QUIZ GENERATOR PAGE -->
+            <section id="quiz" class="page">
+                <div class="tool-banner">
+                    <div class="tool-banner-info">
+                        <div class="tool-num-badge">TOOL 02 • ACTIVE RECALL</div>
+                        <h2>Interactive <span>Quiz Generator</span></h2>
+                        <p>Challenge your brain with auto-generated multiple-choice questions. Test factual recall, concept application, and receive instant explanations.</p>
+                    </div>
+                </div>
+
+                <div class="quiz-container">
+                    <!-- Quiz Setup Panel -->
+                    <div class="panel quiz-setup-panel" id="quizSetupPanel">
+                        <div class="setup-grid">
+                            <div class="form-group full-width">
+                                <label for="quizTopic">What topic do you want to test?</label>
+                                <div class="topic-input-wrapper">
+                                    <input id="quizTopic" type="text" placeholder="e.g. World War II, React Hooks, Cellular Respiration, Calculus..." autocomplete="off">
+                                    <button class="btn-inside-input" id="useActiveNotesForQuizBtn" title="Load active notes from summarizer">Use Active Notes</button>
+                                </div>
+                                <div class="topic-suggestions">
+                                    <span>Popular topics:</span>
+                                    <button class="topic-chip" data-topic="Cell Biology & Genetics">Cell Biology</button>
+                                    <button class="topic-chip" data-topic="Computer Science & Data Structures">Data Structures</button>
+                                    <button class="topic-chip" data-topic="World History & Modern Nations">World History</button>
+                                    <button class="topic-chip" data-topic="Physics: Mechanics & Gravity">Physics</button>
+                                    <button class="topic-chip" data-topic="Macroeconomics & Markets">Economics</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="quizDifficulty">Difficulty Level</label>
+                                <select id="quizDifficulty" class="styled-select full-width-select">
+                                    <option value="beginner">Beginner (Foundational)</option>
+                                    <option value="intermediate" selected>Intermediate (Applied)</option>
+                                    <option value="advanced">Advanced (Deep Mastery)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="quizCount">Number of Questions</label>
+                                <select id="quizCount" class="styled-select full-width-select">
+                                    <option value="3">3 Quick Questions (Sprint)</option>
+                                    <option value="5" selected>5 Standard Questions</option>
+                                    <option value="8">8 Comprehensive Questions</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="setup-actions">
+                            <button class="btn btn-primary btn-large btn-glow" id="startQuizBtn">
+                                <span>Generate Practice Quiz</span>
+                                <span>✦</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Active Quiz Arena -->
+                    <div class="quiz-arena hidden" id="quizArena">
+                        <div class="arena-header">
+                            <div class="arena-progress-meta">
+                                <span class="badge-topic" id="arenaTopicBadge">Biology</span>
+                                <span class="question-tracker">Question <strong id="currentQuestionNum">1</strong> of <span id="totalQuestionsNum">5</span></span>
+                            </div>
+                            <div class="arena-timer">
+                                <span>⏱</span>
+                                <span id="questionTimer">00:30</span>
+                            </div>
+                        </div>
+
+                        <div class="quiz-track-bar">
+                            <div class="quiz-track-fill" id="quizTrackFill" style="width: 20%;"></div>
+                        </div>
+
+                        <div class="question-box">
+                            <h3 class="question-text" id="questionText">Loading question...</h3>
+                            <div class="options-container" id="optionsContainer">
+                                <!-- Options injected dynamically -->
+                            </div>
+
+                            <div class="explanation-box hidden" id="explanationBox">
+                                <div class="explanation-title" id="explanationTitle">Explanation</div>
+                                <p id="explanationText"></p>
+                            </div>
+                        </div>
+
+                        <div class="arena-footer">
+                            <button class="btn btn-secondary" id="quitQuizBtn">Quit Quiz</button>
+                            <button class="btn btn-primary hidden" id="nextQuestionBtn">
+                                <span>Next Question</span>
+                                <span>→</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Score / Completion Screen -->
+                    <div class="quiz-score-card hidden" id="quizScoreCard">
+                        <div class="score-celebration-icon" id="scoreIcon">🏆</div>
+                        <h2 id="scoreTitle">Quiz Completed!</h2>
+                        <p class="score-subtitle" id="scoreSubtitle">Great job challenging your knowledge.</p>
+
+                        <div class="score-circle-display">
+                            <div class="score-big" id="scoreFraction">4 / 5</div>
+                            <div class="score-percentage" id="scorePercentage">80% Mastery</div>
+                            <div class="grade-pill" id="scoreGrade">Grade: A</div>
+                        </div>
+
+                        <div class="score-actions">
+                            <button class="btn btn-primary" id="retakeQuizBtn">Retake Quiz</button>
+                            <button class="btn btn-secondary" id="newQuizBtn">Choose New Topic</button>
+                            <button class="btn btn-ghost" id="createFlashcardsFromMissedBtn">Create Flashcards from Quiz</button>
+                        </div>
+
+                        <!-- Review of questions -->
+                        <div class="quiz-review-section">
+                            <h4>Detailed Question Review</h4>
+                            <div class="review-list" id="quizReviewList">
+                                <!-- Injected -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. FLASHCARDS HUB PAGE -->
+            <section id="flashcards" class="page">
+                <div class="tool-banner">
+                    <div class="tool-banner-info">
+                        <div class="tool-num-badge">TOOL 03 • SPACED REPETITION</div>
+                        <h2>Smart <span>Flashcards Hub</span></h2>
+                        <p>Reinforce your memory with flip-card active recall. Review pre-loaded decks or build your own custom card sets.</p>
+                    </div>
+                    <div class="tool-samples">
+                        <button class="btn btn-secondary" id="openNewCardModalBtn">+ Create Flashcard</button>
+                    </div>
+                </div>
+
+                <div class="flashcards-layout">
+                    <!-- Deck Switcher Bar -->
+                    <div class="deck-selector-bar">
+                        <span class="deck-label">Select Deck:</span>
+                        <div class="deck-pills" id="deckPillsContainer">
+                            <button class="deck-pill active" data-deck="cs">Web & Tech (10)</button>
+                            <button class="deck-pill" data-deck="biology">Cell Biology (8)</button>
+                            <button class="deck-pill" data-deck="history">World History (8)</button>
+                            <button class="deck-pill" data-deck="custom">Custom Decks (<span id="customDeckCount">0</span>)</button>
+                        </div>
+                    </div>
+
+                    <!-- Flashcard 3D Stage -->
+                    <div class="flashcard-stage">
+                        <div class="flashcard-container" id="flashcardElement" tabindex="0" role="button" aria-label="Flashcard. Press space or click to flip.">
+                            <div class="card-inner">
+                                <!-- Front Face -->
+                                <div class="card-face card-front">
+                                    <div class="card-face-header">
+                                        <span class="card-deck-tag" id="cardDeckTag">Web & Tech</span>
+                                        <span class="card-index-indicator" id="cardIndexIndicator">1 / 10</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <span class="card-prompt-type">TERM / QUESTION</span>
+                                        <h3 class="card-term" id="cardFrontText">Document Object Model (DOM)</h3>
+                                    </div>
+                                    <div class="card-face-footer">
+                                        <span class="flip-hint">⟲ Click or press Space to reveal answer</span>
+                                    </div>
+                                </div>
+
+                                <!-- Back Face -->
+                                <div class="card-face card-back">
+                                    <div class="card-face-header">
+                                        <span class="card-deck-tag">ANSWER & EXPLANATION</span>
+                                        <span class="card-index-indicator" id="cardIndexIndicatorBack">1 / 10</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-definition" id="cardBackText">
+                                            A programming interface for HTML and XML documents. It represents the page so programs can change the document structure, style, and content.
+                                        </p>
+                                    </div>
+                                    <div class="card-face-footer">
+                                        <span class="flip-hint">⟲ Click again to flip back</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Controls -->
+                        <div class="card-controls">
+                            <button class="btn-control red-control" id="cardNeedsReviewBtn" title="Needs more practice (Left Arrow)">
+                                <span>❌</span>
+                                <span>Still Learning</span>
+                            </button>
+                            <button class="btn-control neutral-control" id="prevCardBtn" title="Previous Card">
+                                <span>← Previous</span>
+                            </button>
+                            <button class="btn-control flip-btn" id="flipCardBtn" title="Flip Card (Spacebar)">
+                                <span>⟲ Flip</span>
+                            </button>
+                            <button class="btn-control neutral-control" id="nextCardBtn" title="Next Card">
+                                <span>Next →</span>
+                            </button>
+                            <button class="btn-control green-control" id="cardMasteredBtn" title="Mastered (Right Arrow)">
+                                <span>✓</span>
+                                <span>Mastered</span>
+                            </button>
+                        </div>
+
+                        <!-- Deck Progress -->
+                        <div class="deck-progress-bar-wrap">
+                            <div class="deck-progress-header">
+                                <span>Deck Mastery: <strong id="deckMasteredCount">0</strong> Mastered / <span id="deckTotalCount">10</span> Total</span>
+                                <span id="deckMasteryPercent">0%</span>
+                            </div>
+                            <div class="deck-progress-track">
+                                <div class="deck-progress-fill" id="deckProgressFill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. FOCUS POMODORO PAGE -->
+            <section id="pomodoro" class="page">
+                <div class="tool-banner">
+                    <div class="tool-banner-info">
+                        <div class="tool-num-badge">TOOL 04 • DEEP FOCUS</div>
+                        <h2>Focus <span>Pomodoro Timer</span></h2>
+                        <p>Eliminate distractions with interval-based focus cycles. Pair your work sessions with calming synthesized soundscapes.</p>
+                    </div>
+                </div>
+
+                <div class="pomodoro-layout">
+                    <!-- Timer Display Card -->
+                    <div class="pomodoro-card">
+                        <!-- Mode Tabs -->
+                        <div class="timer-mode-tabs">
+                            <button class="timer-tab active" data-mode="pomodoro" data-time="1500">Pomodoro (25m)</button>
+                            <button class="timer-tab" data-mode="shortBreak" data-time="300">Short Break (5m)</button>
+                            <button class="timer-tab" data-mode="longBreak" data-time="900">Long Break (15m)</button>
+                        </div>
+
+                        <!-- Circular SVG Timer -->
+                        <div class="timer-circle-wrap">
+                            <svg class="timer-svg" viewBox="0 0 260 260">
+                                <circle class="timer-track" cx="130" cy="130" r="115"></circle>
+                                <circle class="timer-progress" id="timerProgressRing" cx="130" cy="130" r="115"></circle>
+                            </svg>
+                            <div class="timer-inner-content">
+                                <div class="timer-mode-label" id="currentTimerMode">FOCUS SESSION</div>
+                                <div class="timer-countdown" id="timerDisplay">25:00</div>
+                                <div class="timer-session-info" id="timerCycleText">Cycle 1 of 4</div>
+                            </div>
+                        </div>
+
+                        <!-- Timer Controls -->
+                        <div class="timer-buttons-row">
+                            <button class="btn btn-primary btn-large btn-glow" id="startTimerBtn">Start Focus</button>
+                            <button class="btn btn-secondary" id="pauseTimerBtn" style="display:none;">Pause</button>
+                            <button class="btn btn-ghost" id="resetTimerBtn">Reset</button>
+                            <button class="btn btn-ghost" id="skipTimerBtn">Skip Mode →</button>
+                        </div>
+
+                        <!-- Ambient Study Sound Generator -->
+                        <div class="ambient-sound-panel">
+                            <div class="sound-panel-header">
+                                <span class="sound-icon">🎧</span>
+                                <div class="sound-info">
+                                    <strong>Ambient Audio generator:</strong>
+                                    <span class="muted small">Calming synthesized audio to boost concentration</span>
+                                </div>
+                            </div>
+                            <div class="sound-chips">
+                                <button class="sound-chip active" data-sound="none">Off</button>
+                                <button class="sound-chip" data-sound="rain">Gentle Rain</button>
+                                <button class="sound-chip" data-sound="whitenoise">White Noise</button>
+                                <button class="sound-chip" data-sound="binaural">Binaural Study Drone</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pomodoro Stats & Log -->
+                    <div class="pomodoro-sidebar-panel">
+                        <div class="panel-section">
+                            <h4>Today's Focus Log</h4>
+                            <div class="focus-stats-list">
+                                <div class="focus-stat-item">
+                                    <span class="item-label">Completed Sessions:</span>
+                                    <strong id="completedSessionsCount">2 Sessions</strong>
+                                </div>
+                                <div class="focus-stat-item">
+                                    <span class="item-label">Total Time Locked In:</span>
+                                    <strong id="totalFocusMinutes">50 Minutes</strong>
+                                </div>
+                                <div class="focus-stat-item">
+                                    <span class="item-label">Daily Goal:</span>
+                                    <span>4 Sessions (100m)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-section">
+                            <h4>Why the Pomodoro Technique Works</h4>
+                            <ul class="benefit-list">
+                                <li><strong>Combats Procrastination:</strong> Starting 25 minutes feels low-friction.</li>
+                                <li><strong>Prevents Mental Fatigue:</strong> Scheduled 5-minute pauses recharge dopamine.</li>
+                                <li><strong>Hyperfocus:</strong> One single task per block prevents task switching.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. STUDY PLANNER PAGE -->
+            <section id="planner" class="page">
+                <div class="tool-banner">
+                    <div class="tool-banner-info">
+                        <div class="tool-num-badge">TOOL 05 • TASK MANAGEMENT</div>
+                        <h2>Smart <span>Study Planner</span></h2>
+                        <p>Break down your syllabus, set realistic deadlines, prioritize upcoming exams, and check off milestones.</p>
+                    </div>
+                </div>
+
+                <div class="planner-layout">
+                    <!-- Task Input Form -->
+                    <div class="panel task-creator-panel">
+                        <form id="taskForm" class="task-form">
+                            <div class="form-row-top">
+                                <div class="input-field-group full-flex">
+                                    <label for="taskInput">What do you need to study?</label>
+                                    <input id="taskInput" type="text" placeholder="e.g. Read Physics Chapter 4, Practice 10 Calculus Integrals..." required maxlength="140">
+                                </div>
+                            </div>
+
+                            <div class="form-row-bottom">
+                                <div class="input-field-group">
+                                    <label for="taskCategory">Category</label>
+                                    <select id="taskCategory" class="styled-select">
+                                        <option value="Revision">Revision</option>
+                                        <option value="Exam Prep">Exam Prep</option>
+                                        <option value="Assignment">Assignment</option>
+                                        <option value="Reading">Reading</option>
+                                        <option value="Project">Project</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-field-group">
+                                    <label for="taskPriority">Priority</label>
+                                    <select id="taskPriority" class="styled-select">
+                                        <option value="High">High Priority 🔥</option>
+                                        <option value="Medium" selected>Medium</option>
+                                        <option value="Low">Low</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-field-group">
+                                    <label for="taskDueDate">Target Date</label>
+                                    <input type="date" id="taskDueDate" class="styled-date-input">
+                                </div>
+
+                                <div class="input-field-group button-group">
+                                    <button class="btn btn-primary" type="submit" id="addTaskSubmitBtn">+ Add Task</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Tasks List Section -->
+                    <div class="panel task-list-panel">
+                        <div class="task-filter-header">
+                            <div class="filter-tabs" id="taskFilterTabs">
+                                <button class="filter-tab active" data-filter="all">All Tasks (<span id="countAll">0</span>)</button>
+                                <button class="filter-tab" data-filter="pending">Pending (<span id="countPending">0</span>)</button>
+                                <button class="filter-tab" data-filter="completed">Completed (<span id="countCompleted">0</span>)</button>
+                            </div>
+
+                            <div class="search-tasks-wrap">
+                                <input type="text" id="taskSearchInput" placeholder="Search tasks..." class="task-search-input">
+                            </div>
+                        </div>
+
+                        <ul id="taskList" class="task-list">
+                            <!-- Tasks injected dynamically -->
+                        </ul>
+
+                        <div id="emptyTasks" class="empty-state">
+                            <div class="empty-icon">🌱</div>
+                            <h4>No tasks in this list yet!</h4>
+                            <p>Add a study goal or assignment above to organize your day.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. AI STUDY BUDDY CHAT PAGE -->
+            <section id="chat" class="page">
+                <div class="tool-banner">
+                    <div class="tool-banner-info">
+                        <div class="tool-num-badge">TOOL 06 • 24/7 AI TUTOR</div>
+                        <h2>Ask <span>StudyMate AI</span></h2>
+                        <p>Stuck on a tricky concept? Ask questions, get simple analogies, or break down formulas step-by-step.</p>
+                    </div>
+                </div>
+
+                <div class="chat-container">
+                    <!-- Chat Messages Window -->
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-msg ai-msg">
+                            <div class="msg-avatar">⚡</div>
+                            <div class="msg-bubble">
+                                <div class="msg-sender">StudyMate AI Tutor</div>
+                                <div class="msg-text">
+                                    Hello Scholar! I'm your dedicated AI study buddy. You can ask me to:
+                                    <ul>
+                                        <li>Explain difficult topics in simple words (Feynman Technique)</li>
+                                        <li>Give memory mnemonics or real-life analogies</li>
+                                        <li>Structure a 3-day revision timetable for exams</li>
+                                        <li>Clarify any questions from your notes or quizzes</li>
+                                    </ul>
+                                    What would you like to master today?
+                                </div>
+                                <span class="msg-time">Just now</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Suggested Prompts -->
+                    <div class="chat-suggestions-bar">
+                        <span class="suggestions-label">Try asking:</span>
+                        <div class="suggestion-chips" id="suggestionChips">
+                            <button class="chat-chip">Explain Photosynthesis using a bakery analogy</button>
+                            <button class="chat-chip">How do I overcome exam procrastination?</button>
+                            <button class="chat-chip">Give me 3 memory tricks for the periodic table</button>
+                            <button class="chat-chip">Explain recursion in programming simply</button>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input Area -->
+                    <form class="chat-input-bar" id="chatForm">
+                        <textarea id="chatInput" placeholder="Ask a question, paste a problem, or request an explanation..." rows="1"></textarea>
+                        <button type="submit" class="btn btn-primary" id="chatSendBtn">
+                            <span>Send</span>
+                            <span>➤</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="app-footer">
+                <div class="footer-content">
+                    <div class="footer-left">
+                        <strong>StudyMate AI</strong> <span>· Intelligent Academic Companion</span>
+                    </div>
+                    <div class="footer-right">
+                        <span>All data stored securely on your local device.</span>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Modal: Settings & AI Key -->
+    <div class="modal-overlay hidden" id="settingsModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Settings & Preferences</h3>
+                <button class="modal-close" id="closeSettingsModalBtn">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-group">
+                    <label class="settings-label">AI Engine Mode</label>
+                    <p class="settings-sub">Choose between built-in offline smart NLP or live Google Gemini AI.</p>
+                    <div class="radio-row">
+                        <label class="radio-card">
+                            <input type="radio" name="aiEngineRadio" value="offline" checked>
+                            <div>
+                                <strong>Built-in Smart Engine (Offline)</strong>
+                                <span>Zero-latency, 100% private, works without API keys.</span>
+                            </div>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="aiEngineRadio" value="gemini">
+                            <div>
+                                <strong>Google Gemini AI (Live API)</strong>
+                                <span>Uses Google's cutting-edge language models.</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-group" id="geminiKeyGroup" style="display:none;">
+                    <label for="geminiApiKeyInput" class="settings-label">Google Gemini API Key</label>
+                    <p class="settings-sub">Saved locally in your browser's private localStorage.</p>
+                    <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="styled-input">
+                    <span class="api-key-hint">Get a free key from <a href="https://aistudio.google.com/" target="_blank" rel="noopener">Google AI Studio</a>.</span>
+                </div>
+
+                <div class="settings-group">
+                    <label class="settings-label">Sound Effects</label>
+                    <div class="toggle-row">
+                        <span>Audio feedback for quizzes and pomodoro bells</span>
+                        <input type="checkbox" id="soundToggleCheckbox" checked>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <label class="settings-label">Data Management</label>
+                    <div class="data-actions-row">
+                        <button class="btn btn-secondary" id="exportDataBtn">Export All Study Data</button>
+                        <button class="btn btn-secondary" id="resetDataBtn">Reset to Sample Data</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveSettingsBtn">Save Preferences</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Create New Flashcard -->
+    <div class="modal-overlay hidden" id="cardModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Add New Flashcard</h3>
+                <button class="modal-close" id="closeCardModalBtn">✕</button>
+            </div>
+            <form id="newCardForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="newCardDeck">Deck Category</label>
+                        <select id="newCardDeck" class="styled-select full-width-select">
+                            <option value="custom">Custom Decks</option>
+                            <option value="cs">Web & Tech</option>
+                            <option value="biology">Cell Biology</option>
+                            <option value="history">World History</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newCardFront">Front: Term or Question</label>
+                        <input type="text" id="newCardFront" placeholder="e.g. Mitochondria, What is HTTP?, etc." required class="styled-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="newCardBack">Back: Definition or Answer</label>
+                        <textarea id="newCardBack" rows="4" placeholder="Enter explanation, key points, or definition..." required class="styled-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="cancelCardModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Flashcard</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
